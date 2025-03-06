@@ -11,6 +11,10 @@
 auto-save-list
 tramp
 .\#*
+custom.el
+history
+places
+recentf
 
 # Org-mode
 .org-id-locations
