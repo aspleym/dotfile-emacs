@@ -1,24 +1,163 @@
-;; ADDING MELPA REPO
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Before package
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   
+
+;; Increase how much is read from processes in a single chunk
+(setq read-process-output-max (* 2 1024 1024));
+(setq process-adaptive-read-buffering nil)
+
+;; Dont ping things that look like domain names.
+(setq ffap-machine-p-known 'reject)
+(setq native-comp-async-query-on-exit t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Undo/redo
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   
+
+(setq undo-limit (* 13 160000)
+      undo-strong-limit (* 13 240000)
+      undo-outer-limit (* 13 24000000))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Package.el
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   
+
 (package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+(eval-when-compile (require 'use-package))
 
-;; Removing base stuff
-(setq inhibit-startup-screen t)
-(setq initial-scratch-message nil)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Feature, warnings and errors
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
 
-;; Standard modes removed and enable which-key
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(menu-bar-mode -1)  
-(which-key-mode 1)
+(setq ad-redefinition-action 'accept)
+(setq warning-suppress-types '((lexical-binding)))
 
-;; Ignore bell
-(setq ring-bell-function 'ignore)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Minibuffer
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
 
+;; Allow nested
+(setq enable-recursive-minibuffers t)
+;; Keep cursor outside read-only portions
+(setq minibuffer-prompt-properties
+      '(read-only t intangible t cursor-intangible t face minibuffer-prompt))
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   User interface
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+;; Reduce update time on idle, Emacs "updates" more often than needed
+(setq idle-update-delay 1.0)
+
+;; Shorter responses
+(setq read-answer-short t)
+(if (boundp 'use-short-answers)
+    (setq use-short-answers t)
+  (advice-add #'yes-or-no-p :override #'y-or-no-p))
+(defalias #'view-hello-file #'ignore) ;; Never show the hello file
+
+;; No blink of beep
+(setq visible-bell nil)
+(setq ring-bell-function #'ignore)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Show paren
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+(setq show-paren-delay 0.1
+      show-paren-highlight-openparen t
+      show-paren-when-point-inside-paren t
+      show-paren-when-point-in-periphery t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Compilation
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+(setq compilation-always-kill t
+      compilation-ask-about-save nil
+      compilation-scroll-output 'first-error)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Misc
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+(setq whitespace-line-column nil) ; whitespace-mode
+;; Aiming to improve performance
+(setq rainbow-delimiters-max-face-count 5)
+
+;;
+;; LINE NUMBERS
+;;
+(setq-default display-line-numbers-width 3)
+(setq-default display-line-numbers-widen t)
 ;; Line numbers, relative
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode 1)
+
+(setq truncate-string-ellipsis "...")
+;; Improve responsiveness, delay syntax highlighting during input
+(setq redisplay-skip-fontification-on-input t)
+
+;; Collect and display all available docs immediately
+(setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
+
+;; Disable truncation of printed s-expr in message buffer
+(setq eval-expression-print-length nil
+      eval-expression-print-level nil)
+
+;; Position underlines
+(setq x-underline-at-descent-line t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Files
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+;; Delete by moving to trash in interactive mode
+(setq delete-by-moving-to-trash (not noninteractive))
+(setq remote-file-name-inhibit-delete-by-moving-to-trash t)
+
+;; Ignoring this as acceptable since it will redirect to the buffer regardless.
+(setq find-file-suppress-same-file-warnings t)
+
+;; Resolve symlinks
+(setq find-file-visit-truename t
+      vc-follow-symlinks t)
+
+;; Prefer veertical splits oveer horizontal ones
+(setq split-width-threshold 170
+      split-height-threshold nil)
+
+
+
+
+
+
+(which-key-mode 1)
 
 
 ;; History modes
@@ -45,7 +184,6 @@
 
 ;; Customize
 (setq require-final-newline t)
-(setq load-prefer-newer t)
 ;;(setq tab-width 4)
 
 ;; BASIC CONTROLS
@@ -58,8 +196,6 @@
 ;; Keep auto-save and backup files in one flat directory
 ;; (instead of next to the original files
 (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
-;; Store custom variables in ~/.emacs.d/custom.el (instead of ~/.emacs)
-(setq custom-file (locate-user-emacs-file "custom.el"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
