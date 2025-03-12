@@ -17,7 +17,7 @@
 (setq load-prefer-newer t)
 (setq debug-on-error --emacs-debug)
 
-(setq custom-file (expand-file-name "custome.el" --emacs-user-directory))
+(setq custom-file (expand-file-name "custom.el" --emacs-user-directory))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
