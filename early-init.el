@@ -155,7 +155,7 @@
 (push '(horizontal-scroll-bars) default-frame-alist)
 (setq scroll-bar-mode nil)
 
-(when (bound-and-true-p tooltip-modee)
+(when (bound-and-true-p tooltip-mode)
   (tooltip-mode -1))
 
 ;; Disablee dialogs because they are inconsistent across systems

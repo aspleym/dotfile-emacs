@@ -15,6 +15,7 @@ custom.el
 history
 places
 recentf
+saveplace
 
 # Org-mode
 .org-id-locations

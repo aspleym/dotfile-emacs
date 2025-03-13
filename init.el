@@ -239,6 +239,276 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
 
 (setq recentf-max-saved-items 300)
+(setq recentf-max-menu-items 15)
+(setq recentf-auto-cleanup (if (daemonp) 200 'never))
+(setq recentf-exclude (list "^/\\(?:ssh\\|su\\|sudo\\)?:"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Saveplace and Savehist
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+(save-place-mode)
+(setq save-place-file (expand-file-name "saveplace" user-emacs-directory))
+(setq save-place-limit 600)
+
+(savehist-mode)
+(setq history-length 300)
+(setq savehist-save-minibuffer-history t)
+(setq savehist-additional-variables
+      '(kill-ring ; clipboard
+        register-alist ; macros
+        mark-ring global-mark-ring ; marks
+        search-ring regexp-search-ring)) ; searches
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Frames and windows
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+(setq frame-resize-pixelwise t)
+(setq window-resize-pixelwise nil)
+(setq resize-mini-windows 'grow-only)
+(setq window-divider-default-bottom-width 1
+      window-divider-default-places t
+      window-divider-default-right-width 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Scrolling
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+(setq fast-but-imprecise-scrolling t)
+(setq scroll-error-top-bottom t)
+(setq scroll-preserve-screen-position t)
+(setq scroll-conservatively 101)
+(setq auto-window-vscroll nil)
+(setq scroll-margin 0)
+(setq next-screen-context-lines 0)
+(setq hscroll-margin 2
+      hscroll-step 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Mouse
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+(setq mouse-yank-at-point nil)
+
+;; Emacs 29
+(when (and (display-graphic-p) (fboundp 'context-menu-mode))
+  (add-hook 'after-init-hook #'context-menu-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Cursor
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+(blink-cursor-mode -1)
+(setq blink-matching-paren nil)
+(setq x-stretch-cursor nil)
+(setq-default cursor-in-non-selected-windows nil)
+(setq highlight-nonselected-windows nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Text editing, indent, font and formatting
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+(setq global-text-scale-adjust-resizes-frames nil)
+;; This controls how long Emacs will bink to show the deleted paris.
+(setq delete-pair-blink-delay 0.03)
+(setq-default left-fringe-width 8)
+(setq-default right-fringe-width 8)
+
+(setq-default indicate-buffer-boundaries nil)
+(setq-default indicate-empty-lines nil)
+
+(setq-default word-wrap t)
+
+(setq-default truncate-lines t)
+(setq truncate-partial-width-windows nil)
+
+;; Prefer spaces over tabs. Spaces offer a more consistent default compared to
+;; 8-space tabs. This setting can be adjusted on a per-mode basis as needed.
+(setq-default indent-tabs-mode nil
+              tab-width 4)
+;; Allows for completion too
+(setq-default tab-always-indent nil)
+(setq read-extended-command-predicate #'command-completion-default-include-p)
+(setq comment-multi-line t)
+(setq comment-empty-lines t)
+;; We often split terminals and editor windows, adds some additional horizontal space
+(setq-default fill-column 80)
+(setq sentence-end-double-space nil)
+(setq require-final-newline t)
+(setq lazy-highlight-initial-delay 0)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Modeline, Filetype
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+;; Modeline
+(setq display-time-default-load-average nil)
+;; Filetype
+;;(setq python-indent-guess-indent-offset-verbose nil)
+(setq sh-indent-after-continuation 'always)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Dired
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+(setq dired-free-space nil
+      dired-dwim-target t
+      dired-deletion-confirmer 'y-or-n-p
+      dired-filter-verbose nil
+      dired-recursive-deletes 'top
+      dired-recursive-copies 'always
+      dired-create-destination-dirs 'ask
+      image-dired-thumb-size 150)
+
+(setq dired-vc-rename-file t)
+(setq dired-clean-confirm-killing-deleted-buffers nil)
+
+(setq dired-omit-verbose nil)
+(setq dired-omit-files (concat "\\`[.]\\'"))
+
+(setq ls-lisp-verbosity nil)
+(setq ls-lisp-dirs-first t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Ediff
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+(setq ediff-window-setup-function 'ediff-setup-windows-plain
+      ediff-split-window-function 'split-window-horizontally)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Help
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+(setq help-window-select t)
+(setq apropos-do-all t)
+
+(setq help-enable-completion-autoload nil)
+(setq help-enable-autoload nil)
+(setq help-enable-symbol-autoload nil)
+(setq help-window-select t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Eglot
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+(setq eglot-sync-connect 1
+      eglot-autoshutdown t)
+(setq eglot-extend-to-xref t)
+(setq jsonrpc-event-hook nil)
+(setq eglot-events-buffer-size 0)
+(setq eglot-report-progress nil) ; Prevent Eglot minibuffer spam
+(setq eglot-events-buffer-config '(:size 0 :format full))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Flymake
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+(setq flymake-fringe-indicator-position 'left-fringe)
+(setq flymake-show-diagnostics-at-end-of-file nil)
+(setq flymake-supress-zero-counters t)
+(setq flymake-wrap-around nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   hl-line-mode
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+;; Restrict highlighting to current window, and improved performance
+(setq hl-line-sticky-flag nil)
+(setq global-hl-line-sticky-flag nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   iccomplete
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+(setq icomplete-compute-delay 0.01)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   ibuffer
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+(setq ibuffer-formats
+      '((mark modified read-only locked
+              " " (name 40 40 :left :elide)
+              " " (size 8 -1 :right)
+              " " (mode 18 18 :left :elide) " " filename-and-process)
+        (mark " " (name 16 -1) " " filename)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   xref
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+(setq xref-show-definitions-function 'xref-show-definitions-completing-read
+      xref-show-xrefs-function 'xref-show-definitions-completing-read)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   abbrev, dabbrev
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+;; Abbrev
+(setq abbrev-file-name (expand-file-name "abbrev_defs" user-emacs-directory))
+(setq save-abbrevs 'silently)
+
+;; Dabbrev
+(setq dabbrev-upcase-means-case-search t)
+(setq dabbrev-ignored-buffer-modes
+      '(archive-mode image-mode docview-mode tags-table-mode pdf-view-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Remove warnings, regions things
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+(dolist (cmd '(list-timers narrow-to-region upcase-region downcase-region
+                           erase-buffer scroll-left dired-find-alternate-file))
+  (put cmd 'disabled nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   INIT DONE
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   CUSTOM THINGS
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
 
 
 
@@ -246,20 +516,16 @@
 
 
 ;; History modes
-(savehist-mode t)
-(save-place-mode t)
-(recentf-mode t)
-(setq recentf-max-saved-items 50)
-(global-set-key (kbd "C-x C-r") 'recentf-open-files)
+(global-set-key (kbd "C-x C-r") 'recentf-open)
 
 ;; Polling to update from disk
 ;; Automatically reread from disk if the underlying file changes
-(setopt auto-revert-avoid-polling t)
+;;(setopt auto-revert-avoid-polling t)
 ;; Some systems don't do file notifications well; see
 ;; https://todo.sr.ht/~ashton314/emacs-bedrock/11
-(setopt auto-revert-interval 5)
-(setopt auto-revert-check-vc-info t)
-(global-auto-revert-mode)
+;;(setopt auto-revert-interval 5)
+;;(setopt auto-revert-check-vc-info t)
+;;(global-auto-revert-mode)
 
 ;;; Load theme
 (load-theme 'modus-vivendi)
@@ -267,9 +533,6 @@
 ;; Do not ask for permission to kill a buffer (unless it is modified)
 (global-set-key (kbd "C-x k") 'kill-current-buffer)
 
-;; Customize
-(setq require-final-newline t)
-;;(setq tab-width 4)
 
 ;; BASIC CONTROLS
 ;; Move through windows with Ctrl-<arrow keys>
@@ -287,8 +550,8 @@
 
 ;; For help, see: https://www.masteringemacs.org/article/understanding-minibuffer-completion
 
-(setopt enable-recursive-minibuffers t)                ; Use the minibuffer whilst in the minibuffer
-(setopt completion-cycle-threshold 1)                  ; TAB cycles candidates
+;;(setopt enable-recursive-minibuffers t)                ; Use the minibuffer whilst in the minibuffer
+;;(setopt completion-cycle-threshold 1)                  ; TAB cycles candidates
 (setopt completions-detailed t)                        ; Show annotations
 (setopt tab-always-indent 'complete)                   ; When I hit TAB, try to complete, otherwise, indent
 (setopt completion-styles '(basic initials substring)) ; Different styles to match input to candidates
@@ -298,8 +561,8 @@
 (setopt completions-detailed t)
 (setopt completions-format 'one-column)
 (setopt completions-group t)
-(setopt completion-auto-select 'second-tab)            ; Much more eager
-;(setopt completion-auto-select t)                     ; See `C-h v completion-auto-select' for more possible values
+;;(setopt completion-auto-select 'second-tab)            ; Much more eager
+;;(setopt completion-auto-select t)                     ; See `C-h v completion-auto-select' for more possible values
 
 (keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
 
@@ -313,29 +576,15 @@
 (setopt line-number-mode t)                        ; Show current line in modeline
 (setopt column-number-mode t)                      ; Show column as well
 
-(setopt x-underline-at-descent-line nil)           ; Prettier underlines
-(setopt switch-to-buffer-obey-display-actions t)   ; Make switching buffers more consistent
+;;(setopt switch-to-buffer-obey-display-actions t)   ; Make switching buffers more consistent
 
-(setopt show-trailing-whitespace nil)      ; By default, don't underline trailing spaces
-(setopt indicate-buffer-boundaries 'left)  ; Show buffer top and bottom in the margin
+;;(setopt show-trailing-whitespace nil)      ; By default, don't underline trailing spaces
+;;(setopt indicate-buffer-boundaries 'left)  ; Show buffer top and bottom in the margin
 
-;; Enable horizontal scrolling
-(setopt mouse-wheel-tilt-scroll t)
-(setopt mouse-wheel-flip-direction t)
-
-;; We won't set these, but they're good to know about
-(setopt indent-tabs-mode nil)
-;; (setopt tab-width 4)
-
-;; Misc. UI tweaks
-(blink-cursor-mode -1)                                ; Steady cursor
-(pixel-scroll-precision-mode)                         ; Smooth scrolling
 
 ;; Use common keystrokes by default
 (cua-mode)
 
-;; Display line numbers in programming mode
-;; (setopt display-line-numbers-width 3)           ; Set a minimum width
 
 ;; Nice line wrapping when working with text
 (add-hook 'text-mode-hook 'visual-line-mode)
@@ -357,4 +606,5 @@
   :ensure t
   :init
   (global-set-key (kbd "C-x b") 'consult-buffer))
+
 
