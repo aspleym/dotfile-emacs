@@ -240,6 +240,7 @@
 (mapc #'disable-theme custom-enabled-themes)  ; Disable all active themes
 (load-theme 'modus-vivendi)  ; Load the built-in theme
 
+
 ;; IMPROVED UNDO/REDO
 ;; The undo-fu package is a lightweight wrapper around Emacs' built-in undo
 ;; system, providing more convenient undo/redo functionality.
@@ -248,11 +249,12 @@
   :commands (undo-fu-only-undo
              undo-fu-only-redo
              undo-fu-only-redo-all
-             undo-fu-disable-checkpoint)
-  :config
-  (global-unset-key (kbd "C-z"))
-  (global-set-key (kbd "C-z") 'undo-fu-only-undo)
-  (global-set-key (kbd "C-S-z") 'undo-fu-only-redo))
+             undo-fu-disable-checkpoint))
+;; MUST SET THE KEYS OUTSIDE OF THE DEFER, FOR SOME REASON
+(global-unset-key (kbd "C-z"))
+(global-set-key (kbd "C-z") 'undo-fu-only-undo)
+(global-set-key (kbd "C-S-z") 'undo-fu-only-redo)
+
 
 ;; The undo-fu-session package complements undo-fu by enabling the saving
 ;; and restoration of undo history across Emacs sessions, even after restarting.
@@ -260,6 +262,8 @@
   :defer t
   :commands undo-fu-session-global-mode
   :hook (after-init . undo-fu-session-global-mode))
+
+
 
 ;; LSP Servers
 (use-package eglot
@@ -280,7 +284,6 @@
              easysession-save-as
              easysession-save-mode
              easysession-load-including-geometry)
-
   :custom
   (easysession-mode-line-misc-info t)  ; Display the session in the modeline
   (easysession-save-interval (* 10 60))  ; Save every 10 minutes
@@ -320,10 +323,10 @@
 
 
 ;; FACK THE MOUSE
-(use-package inhibit-mouse
-  :ensure t
-  :config
-  (inhibit-mouse-mode))
+;; (use-package inhibit-mouse
+;;   :ensure t
+;;   :config
+;;   (inhibit-mouse-mode))
 
 
 ;; FLYSPELL FOR SPELL CHECKING, ADD IF NEEDED
@@ -387,7 +390,10 @@
   (which-key-max-description-length 40))
 
 ;; Display the time in the modeline
+(setopt display-time-format "%F %T")
+(setopt display-time-interval 1)
 (display-time-mode 1)
+
 ;; Paren highlighting
 (show-paren-mode 1)
 ;; Track window changes
@@ -429,7 +435,7 @@
 (add-hook 'dired-mode-hook #'dired-omit-mode)
 
 ;; Configure Emacs to ask for confirmation before exiting
-(setq confirm-kill-emacs 'y-or-n-p)
+;;(setq confirm-kill-emacs 'y-or-n-p)
 
 ;; Enabled backups save your changes to a file intermittently
 (setq make-backup-files t)
