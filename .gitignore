@@ -16,6 +16,7 @@ history
 places
 recentf
 saveplace
+/var/
 
 # Org-mode
 .org-id-locations
