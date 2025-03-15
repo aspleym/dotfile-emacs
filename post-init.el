@@ -79,9 +79,29 @@
   (text-mode-ispell-word-completion nil)
   (tab-always-indent 'complete)
 
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0.0)
+  (corfu-echo-documentation 0.25)
+  (corfu-preview-current 'insert)
+
+  :bind (:map corfu-map
+              ;;("RET" . nil)
+              ("TAB" . corfu-next)
+              ([tab] . corfu-next)
+              ("S-TAB" . corfu-previous)
+              ([backtab] . corfu-previous)
+              ;;("S-<return>" . corfu-insert)
+              )
+
   ;; Enable Corfu
   :config
-  (global-corfu-mode))
+  (global-corfu-mode)
+  (corfu-popupinfo-mode)
+  (corfu-history-mode)
+  ;;(corfu-echo-mode)
+  )
 
 (use-package cape
   :ensure t
@@ -93,7 +113,26 @@
   ;; used by `completion-at-point'.
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
-  (add-hook 'completion-at-point-functions #'cape-elisp-block))
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
+
+;;; yasnippet-capf
+(use-package yasnippet-capf
+  :after cape yasnippet
+  :config
+  ;; enable yasnippet-capf everywhere
+  (progn
+    (add-to-list 'completion-at-point-functions #'yasnippet-capf))
+  ;; integrate yasnippet-capf with eglot completion
+  (progn
+    (defun my/eglot-capf-with-yasnippet ()
+      (setq-local completion-at-point-functions
+                  (list 
+		           (cape-capf-super
+		            #'eglot-completion-at-point
+		            #'yasnippet-capf))))
+    (with-eval-after-load 'eglot
+      (add-hook 'eglot-managed-mode-hook #'my/eglot-capf-with-yasnippet))))
 
 ;; VERTICO, ORDERLESS, MARGINALIA, EMBARK, CONSULT
 
@@ -273,6 +312,8 @@
              eglot-ensure
              eglot-rename
              eglot-format-buffer))
+
+
 
 ;; HANDLE SETTING UP LSP FOR DIFFERENT MODES
 
@@ -467,3 +508,24 @@
 ;; Remember to add an entry for `t', the library uses that as default.
 
 ;; The Custom interface is also supported for tuning the variable above.
+
+;; BASIC CONTROLS
+;; Move through windows with Ctrl-<arrow keys>
+(windmove-default-keybindings 'control) ; You can use other modifiers here
+(when (eq system-type 'darwin)
+  (windmove-default-keybindings 'shift) ; If mac, shift will be better
+  )
+
+
+;; ODIN MODE
+(defvar treesit-language-source-alist
+  '(
+    (odin "https://github.com/tree-sitter-grammars/tree-sitter-odin")
+    ))
+
+(minimal-emacs-load-user-init "odin-ts-mode/odin-ts-mode.el")
+
+;;(add-hook 'odin-ts-mode-hook eglot-ensure)
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '(odin-ts-mode . ("~/lsp/ols/ols"))))
