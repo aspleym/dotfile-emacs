@@ -93,6 +93,8 @@
               ("S-TAB" . corfu-previous)
               ([backtab] . corfu-previous)
               ;;("S-<return>" . corfu-insert)
+              ;;("<escape>" . 'corfu-quit)
+              ("S-<escape>" . corfu-quit)
               )
 
   ;; Enable Corfu
@@ -334,7 +336,7 @@
   ;; C-c l for switching sessions
   ;; and C-c s for saving the current session
   (global-set-key (kbd "C-c l") 'easysession-switch-to)
-  (global-set-key (kbd "C-c s") 'easysession-save-as)
+  ;;(global-set-key (kbd "C-c s") 'easysession-save-as)
 
   ;; The depth 102 and 103 have been added to to `add-hook' to ensure that the
   ;; session is loaded after all other packages. (Using 103/102 is particularly
@@ -529,3 +531,118 @@
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
                '(odin-ts-mode . ("~/lsp/ols/ols"))))
+
+(add-hook 'odin-ts-mode-hook 'eglot-ensure)
+
+
+;; SOME CUSTOMS
+(setq scroll-preserve-screen-position 'always) 
+(add-hook 'prog-mode-hook 'electric-pair-local-mode)
+
+(global-set-key (kbd "C-c f") 'project-find-file)
+(global-set-key (kbd "C-c c") 'project-compile)
+(global-set-key (kbd "C-c g") 'consult-ripgrep)
+(global-set-key (kbd "C-c d") 'project-dired)
+(global-set-key (kbd "C-c b") 'project-switch-to-buffer)
+
+;;; MEOW!!!!!!!!!!!!!
+
+
+(use-package meow
+  :ensure t
+  :init
+  (defun meow-setup ()
+    (setq meow-cheatsheet-layout meow-cheatsheet-layout-colemak-dh)
+    
+    (meow-motion-overwrite-define-key
+     '("n" . meow-next)
+     '("e" . meow-prev)
+     '("<escape>" . ignore))
+    (meow-leader-define-key
+     '("?" . meow-cheatsheet)
+     
+     
+     )
+    (meow-normal-define-key
+
+     ;; Insertion
+     '("a" . meow-append)
+     '("A" . meow-open-below)
+     '("r" . meow-replace)
+     '("s" . meow-insert)
+     '("S" . meow-open-above)
+     '("c" . meow-change)
+
+     ;; Navigation
+     '("n" . meow-next)
+     '("e" . meow-prev)
+     '("m" . meow-left)
+     '("i" . meow-right)
+
+     ;; Expand
+     '("E" . meow-prev-expand)
+     '("M" . meow-left-expand)
+     '("I" . meow-right-expand)
+     '("N" . meow-next-expand)
+
+     '("h" . meow-mark-word)
+     '("H" . meow-mark-symbol)
+     '("z" . meow-pop-selection)
+     '("g" . meow-cancel-selection)
+     '("t" . meow-till)
+
+     ;; Complex navigation
+     '("w" . meow-next-word)
+     '("W" . meow-next-symbol)
+     '("b" . meow-back-word)
+     '("B" . meow-back-symbol)
+
+     '("f" . meow-find)
+     '("o" . meow-block)
+     '("O" . meow-to-block)
+
+     '("," . meow-inner-of-thing)
+     '("." . meow-bounds-of-thing)
+     '("[" . meow-beginning-of-thing)
+     '("]" . meow-end-of-thing)
+
+     '("/" . meow-visit)
+     '("v" . meow-search)
+     
+     ;; Bigger changes
+     '("j" . meow-join)
+     '("l" . meow-line)
+     '("k" . meow-kill)
+     '(";" . meow-reverse)
+     '("p" . meow-yank)
+     '("y" . meow-save)
+     '("u" . meow-undo)
+     '("U" . meow-undo-in-selection)
+
+     '("0" . meow-expand-0)
+     '("1" . meow-expand-1)
+     '("2" . meow-expand-2)
+     '("3" . meow-expand-3)
+     '("4" . meow-expand-4)
+     '("5" . meow-expand-5)
+     '("6" . meow-expand-6)
+     '("7" . meow-expand-7)
+     '("8" . meow-expand-8)
+     '("9" . meow-expand-9)
+     '("-" . negative-argument)
+
+     '("'" . repeat)
+     '("G" . meow-grab)
+
+     ;; Simple text manipulation
+     '("x" . meow-delete)
+     '("X" . meow-backward-delete)
+
+     '("q" . meow-quit)
+     '("<escape>" . ignore)
+     )
+    )
+  :config
+  (meow-setup)
+  (meow-global-mode 1))
+
