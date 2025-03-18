@@ -539,11 +539,37 @@
 (setq scroll-preserve-screen-position 'always) 
 (add-hook 'prog-mode-hook 'electric-pair-local-mode)
 
-(global-set-key (kbd "C-c f") 'project-find-file)
+(global-set-key (kbd "C-c f f") 'project-find-file)
+(global-set-key (kbd "C-c f w") 'find-file-other-window)
+
+(global-set-key (kbd "C-c w w") 'other-window-prefix)
+
 (global-set-key (kbd "C-c c") 'project-compile)
-(global-set-key (kbd "C-c g") 'consult-ripgrep)
+
+(global-set-key (kbd "C-c s s") 'consult-line)
+(global-set-key (kbd "C-c s o") 'consult-outline)
+(global-set-key (kbd "C-c s g") 'consult-ripgrep)
+
 (global-set-key (kbd "C-c d") 'project-dired)
 (global-set-key (kbd "C-c b") 'project-switch-to-buffer)
+(global-set-key (kbd "C-c k") 'kill-buffer)
+
+(defun custom--scroll-down ()
+  (interactive)
+  (scroll-up-command) ;Actually down
+  (recenter))
+(defun custom--scroll-up ()
+  (interactive)
+  (scroll-down-command)
+  (recenter)
+  )
+
+(global-set-key (kbd "C-v") 'custom--scroll-down)
+(global-set-key (kbd "M-v") 'custom--scroll-up)
+
+(setq scroll-margin 10)
+
+;; C-v and M-v is a scroll-up-command and scroll-down-command
 
 ;;; MEOW!!!!!!!!!!!!!
 
@@ -643,6 +669,9 @@
      )
     )
   :config
-  (meow-setup)
-  (meow-global-mode 1))
+  ;;(meow-setup)
+  ;;(meow-global-mode 1)
+  )
+
+
 
