@@ -543,6 +543,9 @@
 (global-set-key (kbd "C-c f w") 'find-file-other-window)
 
 (global-set-key (kbd "C-c w w") 'other-window-prefix)
+(global-set-key (kbd "C-c w t") 'split-window-right)
+(global-set-key (kbd "C-c w T") 'split-window-below)
+;;(global-set-key (kbd ""))
 
 (global-set-key (kbd "C-c c") 'project-compile)
 
@@ -552,8 +555,24 @@
 
 (global-set-key (kbd "C-c d") 'project-dired)
 (global-set-key (kbd "C-c b") 'project-switch-to-buffer)
-(global-set-key (kbd "C-c k") 'kill-buffer)
 
+;; KILL BINDINGS
+(global-unset-key (kbd "C-c k"))
+
+(defun custom--kill-current ()
+  (interactive)
+  (kill-buffer . nil)
+  )
+
+(global-set-key (kbd "C-c k k") 'custom--kill-current)
+(global-set-key (kbd "C-c k l")  'ibuffer)
+
+(defun custom--kill-current ()
+  (interactive)
+  (kill-buffer . nil)
+  )
+
+;; SCROLL AND CENTER BINDINGS
 (defun custom--scroll-down ()
   (interactive)
   (scroll-up-command) ;Actually down
