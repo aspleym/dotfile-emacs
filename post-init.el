@@ -80,9 +80,9 @@
   (tab-always-indent 'complete)
 
   (corfu-cycle t)
-  (corfu-auto t)
+  ;;(corfu-auto t)
   (corfu-auto-prefix 2)
-  (corfu-auto-delay 0.0)
+  ;;(corfu-auto-delay 0.0)
   (corfu-echo-documentation 0.25)
   (corfu-preview-current 'insert)
 
@@ -179,7 +179,7 @@
              embark-prefix-help-command)
   :bind
   (("C-." . embark-act)         ;; pick some comfortable binding
-   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-," . embark-dwim)        ;; good alternative: M-.
    ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
 
   :init
@@ -549,7 +549,6 @@
 (global-set-key (kbd "C-c w t") 'split-window-right)
 (global-set-key (kbd "C-c w T") 'split-window-below)
 (global-set-key (kbd "C-c w q") 'quit-window)
-;;(global-set-key (kbd ""))
 
 (global-set-key (kbd "C-c c c") 'project-compile)
 (global-set-key (kbd "C-c c f") 'eglot-format)
@@ -601,6 +600,8 @@
 (setq scroll-margin 10)
 
 ;; C-v and M-v is a scroll-up-command and scroll-down-command
+
+
 
 ;;; MEOW!!!!!!!!!!!!!
 
@@ -702,4 +703,30 @@
   (setq meow-expand-hint-remove-delay 3.0)
   (meow-setup)
   (meow-setup-indicator)
-  (meow-global-mode 1))
+  (meow-global-mode 1)
+  )
+
+
+(use-package meow-tree-sitter
+  :init
+  (meow-tree-sitter-register-defaults)
+  )
+
+(use-package avy
+  :config
+  (global-set-key (kbd "C-c ' l") 'avy-goto-line)
+  (global-set-key (kbd "C-c ' w") 'avy-goto-word-1)
+  (global-set-key (kbd "C-c ' '") 'avy-goto-char)
+
+  ;; Setting Colemak-dh avy home row keys
+  (setq avy-keys '(?a ?r ?s ?t ?n ?e ?i ?o))
+  )
+
+(use-package move-dup
+  :init
+  (global-unset-key (kbd "C-M-e"))
+  :bind (("M-e"   . move-dup-move-lines-up)
+         ("C-M-e" . move-dup-duplicate-up)
+         ("M-n"   . move-dup-move-lines-down)
+         ("C-M-n" . move-dup-duplicate-down))
+  )
