@@ -1,4 +1,4 @@
-;;; post-init.el --- Post init file -*- no-byte-compile: t; lexical-binding: t; -*-
+;; post-init.el --- Post init file -*- no-byte-compile: t; lexical-binding: t; -*-
 
 ;; Ensure adding the following compile-angel code at the very beginning
 ;; of your `~/.emacs.d/post-init.el` file, before all other packages.
@@ -116,6 +116,7 @@
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  (add-hook 'completion-at-point-functions #'cape-history)
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
 
 ;;; yasnippet-capf
@@ -503,7 +504,7 @@
       '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
         (boolean :style "cod" :icon "symbol_boolean" :face font-lock-builtin-face)
         ;; You can alternatively specify a function to perform the mapping,
-        ;; use this when knowing the exact completion candidate is important.
+        ;; use this when knowing the exact completion canDidate is important.
         (file :fn nerd-icons-icon-for-file :face font-lock-string-face)
         ;; ...
         (t :style "cod" :icon "code" :face font-lock-warning-face)))
@@ -538,23 +539,32 @@
 ;; SOME CUSTOMS
 (setq scroll-preserve-screen-position 'always) 
 (add-hook 'prog-mode-hook 'electric-pair-local-mode)
+(setq-default echo-keystrokes 0.01)
 
+;; Project
 (global-set-key (kbd "C-c f f") 'project-find-file)
 (global-set-key (kbd "C-c f w") 'find-file-other-window)
 
 (global-set-key (kbd "C-c w w") 'other-window-prefix)
 (global-set-key (kbd "C-c w t") 'split-window-right)
 (global-set-key (kbd "C-c w T") 'split-window-below)
+(global-set-key (kbd "C-c w q") 'quit-window)
 ;;(global-set-key (kbd ""))
 
-(global-set-key (kbd "C-c c") 'project-compile)
+(global-set-key (kbd "C-c c c") 'project-compile)
+(global-set-key (kbd "C-c c f") 'eglot-format)
+(global-set-key (kbd "C-c c a") 'eglot-code-actions)
+(global-set-key (kbd "C-c c g") 'comment-line)
+
 
 (global-set-key (kbd "C-c s s") 'consult-line)
 (global-set-key (kbd "C-c s o") 'consult-outline)
 (global-set-key (kbd "C-c s g") 'consult-ripgrep)
+(global-set-key (kbd "C-c s m") 'consult-mark)
 
 (global-set-key (kbd "C-c d") 'project-dired)
 (global-set-key (kbd "C-c b") 'project-switch-to-buffer)
+
 
 ;; KILL BINDINGS
 (global-unset-key (kbd "C-c k"))
@@ -585,6 +595,8 @@
 
 (global-set-key (kbd "C-v") 'custom--scroll-down)
 (global-set-key (kbd "M-v") 'custom--scroll-up)
+(global-set-key (kbd "<next>") 'custom--scroll-down)
+(global-set-key (kbd "<prior>") 'custom--scroll-up)
 
 (setq scroll-margin 10)
 
@@ -605,8 +617,6 @@
      '("<escape>" . ignore))
     (meow-leader-define-key
      '("?" . meow-cheatsheet)
-     
-     
      )
     (meow-normal-define-key
 
@@ -688,9 +698,8 @@
      )
     )
   :config
-  ;;(meow-setup)
-  ;;(meow-global-mode 1)
-  )
-
-
-
+  (setq meow-esc-delay 0.001)
+  (setq meow-expand-hint-remove-delay 3.0)
+  (meow-setup)
+  (meow-setup-indicator)
+  (meow-global-mode 1))
