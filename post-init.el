@@ -80,9 +80,9 @@
   (tab-always-indent 'complete)
 
   (corfu-cycle t)
-  (corfu-auto t)
+  ;;(corfu-auto t)
   (corfu-auto-prefix 2)
-  (corfu-auto-delay 0.0)
+  ;;(corfu-auto-delay 0.0)
   (corfu-echo-documentation 0.25)
   (corfu-preview-current 'insert)
 
@@ -178,7 +178,7 @@
              embark-prefix-help-command)
   :bind
   (("C-." . embark-act)         ;; pick some comfortable binding
-   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-," . embark-dwim)        ;; good alternative: M-.
    ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
 
   :init
@@ -590,6 +590,8 @@
 
 ;; C-v and M-v is a scroll-up-command and scroll-down-command
 
+
+
 ;;; MEOW!!!!!!!!!!!!!
 
 
@@ -688,9 +690,16 @@
      )
     )
   :config
-  ;;(meow-setup)
-  ;;(meow-global-mode 1)
+  (meow-setup)
+  (meow-global-mode 1)
   )
+
+
+(use-package meow-tree-sitter
+  :init
+  (meow-tree-sitter-register-defaults)
+  )
+
 
 
 
