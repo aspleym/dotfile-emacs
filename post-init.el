@@ -701,5 +701,24 @@
   )
 
 
+(use-package avy
 
+  :config
+  (global-set-key (kbd "C-c ' l") 'avy-goto-line)
+  (global-set-key (kbd "C-c ' w") 'avy-goto-word-1)
+  (global-set-key (kbd "C-c ' '") 'avy-goto-char)
+
+  ;; Setting Colemak-dh avy home row keys
+  (setq avy-keys '(?a ?r ?s ?t ?n ?e ?i ?o))
+  )
+
+
+
+(use-package move-dup
+  :init
+  (global-unset-key (kbd "C-M-e"))
+  :bind (("M-e"   . move-dup-move-lines-up)
+         ("C-M-e" . move-dup-duplicate-up)
+         ("M-n"   . move-dup-move-lines-down)
+         ("C-M-n" . move-dup-duplicate-down)))
 
