@@ -537,36 +537,54 @@
 
 
 ;; SOME CUSTOMS
+;;(setq scroll-step 3)
 (setq scroll-preserve-screen-position 'always) 
 (add-hook 'prog-mode-hook 'electric-pair-local-mode)
 (setq-default echo-keystrokes 0.01)
 
 ;; Project
-(global-set-key (kbd "C-c f f") 'project-find-file)
-(global-set-key (kbd "C-c f w") 'find-file-other-window)
+(global-set-key (kbd "C-c f p") 'project-find-file)
+(global-set-key (kbd "C-c f F") 'find-file-other-window)
+(global-set-key (kbd "C-c f r") 'consult-ripgrep)
+(global-set-key (kbd "C-c f g") 'consult-git-grep)
+(global-set-key (kbd "C-c f G") 'consult-grep)
+(global-set-key (kbd "C-c f f") 'consult-find)
+
 
 (global-set-key (kbd "C-c w w") 'other-window-prefix)
 (global-set-key (kbd "C-c w t") 'split-window-right)
 (global-set-key (kbd "C-c w T") 'split-window-below)
 (global-set-key (kbd "C-c w q") 'quit-window)
+(global-set-key (kbd "C-c w =") 'balance-windows)
+
+
 
 (global-set-key (kbd "C-c c c") 'project-compile)
 (global-set-key (kbd "C-c c f") 'eglot-format)
 (global-set-key (kbd "C-c c a") 'eglot-code-actions)
 (global-set-key (kbd "C-c c g") 'comment-line)
+(global-set-key (kbd "C-c c e") 'consult-flymake)
 
 
 (global-set-key (kbd "C-c s s") 'consult-line)
+(global-set-key (kbd "C-c s t") 'avy-goto-char)
 (global-set-key (kbd "C-c s o") 'consult-outline)
-(global-set-key (kbd "C-c s g") 'consult-ripgrep)
 (global-set-key (kbd "C-c s m") 'consult-mark)
 
+
 (global-set-key (kbd "C-c d") 'project-dired)
-(global-set-key (kbd "C-c b") 'project-switch-to-buffer)
+(global-set-key (kbd "C-c b b") 'consult-butffer)
+(global-set-key (kbd "C-c b B") 'consult-buffer-other-window)
+(global-set-key (kbd "C-c b i") 'ibuffer)
+
+(global-set-key (kbd "C-c E f") 'toggle-frame-fullscreen)
+(global-set-key (kbd "C-c E m") 'toggle-frame-maximized)
+(global-set-key (kbd "C-c E F") 'make-frame)
 
 
 ;; KILL BINDINGS
 (global-unset-key (kbd "C-c k"))
+(global-set-key (kbd "C-S-p") 'consult-yank-from-kill-ring)
 
 (defun custom--kill-current ()
   (interactive)
@@ -594,10 +612,11 @@
 
 (global-set-key (kbd "C-v") 'custom--scroll-down)
 (global-set-key (kbd "M-v") 'custom--scroll-up)
+
 (global-set-key (kbd "<next>") 'custom--scroll-down)
 (global-set-key (kbd "<prior>") 'custom--scroll-up)
 
-(setq scroll-margin 10)
+(setq scroll-margin 20)
 
 ;; C-v and M-v is a scroll-up-command and scroll-down-command
 
@@ -675,16 +694,16 @@
      '("u" . meow-undo)
      '("U" . meow-undo-in-selection)
 
-     '("0" . meow-expand-0)
-     '("1" . meow-expand-1)
-     '("2" . meow-expand-2)
-     '("3" . meow-expand-3)
-     '("4" . meow-expand-4)
-     '("5" . meow-expand-5)
-     '("6" . meow-expand-6)
-     '("7" . meow-expand-7)
-     '("8" . meow-expand-8)
-     '("9" . meow-expand-9)
+     '("0" . meow-0)
+     '("1" . meow-1)
+     '("2" . meow-2)
+     '("3" . meow-3)
+     '("4" . meow-4)
+     '("5" . meow-5)
+     '("6" . meow-6)
+     '("7" . meow-7)
+     '("8" . meow-8)
+     '("9" . meow-9)
      '("-" . negative-argument)
 
      '("'" . repeat)
@@ -706,10 +725,36 @@
   (meow-global-mode 1)
   )
 
+(defmacro def-meow-digit-action (func digit)
+  "Create function FUNC that when called will call `meow-expand-DIGIT' when
+  expanding, and `meow-digit-argument' otherwise."
+  (let ((meow-expand-digit (intern (format "meow-expand-%d" digit))))
+    `(defun ,func ()
+       (interactive)
+       (if (meow-expanding-p)
+           (,meow-expand-digit)
+         (meow-digit-argument)))))
+
+(defun meow-expanding-p ()
+  "Return non-NIL when `meow' is either expanding or selecting text."
+  (meow--selection-type))
+
+(def-meow-digit-action meow-1 1)
+(def-meow-digit-action meow-2 2)
+(def-meow-digit-action meow-3 3)
+(def-meow-digit-action meow-4 4)
+(def-meow-digit-action meow-5 5)
+(def-meow-digit-action meow-6 6)
+(def-meow-digit-action meow-7 7)
+(def-meow-digit-action meow-8 8)
+(def-meow-digit-action meow-9 9)
+(def-meow-digit-action meow-0 0)
+
 
 (use-package meow-tree-sitter
   :init
   (meow-tree-sitter-register-defaults)
+  (add-to-list 'meow-tree-sitter-major-mode-language-alist '("odin" "odin"))
   )
 
 (use-package avy
@@ -730,3 +775,4 @@
          ("M-n"   . move-dup-move-lines-down)
          ("C-M-n" . move-dup-duplicate-down))
   )
+
